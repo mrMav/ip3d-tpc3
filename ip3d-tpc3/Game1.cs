@@ -12,10 +12,34 @@ namespace ip3d_tpc3
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Axis3D axis;
+
+        Plane plane;
+
+        OrbitCamera camera;
+
+        DirectionalLight light;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            //graphics.IsFullScreen = true;
+
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            graphics.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+            graphics.ApplyChanges();
+        }
+
+        // callback for preparing device settings, see link above for more info
+        private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            graphics.PreferMultiSampling = true;
+            e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;  // samples count
         }
 
         /// <summary>
@@ -26,7 +50,25 @@ namespace ip3d_tpc3
         /// </summary>
         protected override void Initialize()
         {
+
+            Window.Title = $"EP3D-TPC3 - JORGE NORO - 15705 {graphics.GraphicsProfile}, Sampling: {graphics.PreferMultiSampling}, Samples: {GraphicsDevice.PresentationParameters.MultiSampleCount}";
+
+            // set mouse cursor state
+            IsMouseVisible = false;
+
             // TODO: Add your initialization logic here
+
+            axis = new Axis3D(this, Vector3.Zero, 10);
+
+            plane = new Plane(this, "grey", 10, 10, 2, 2);
+
+            camera = new OrbitCamera(this, Vector3.Zero, new Vector3(10, 10, 0));
+            camera.Target.Y = 2f;
+
+            light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Blue.ToVector4(), 0.85f);
+
+            // init controls
+            Controls.Initilalize();
 
             base.Initialize();
         }
@@ -59,10 +101,22 @@ namespace ip3d_tpc3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            Controls.UpdateCurrentStates();
+
+            Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+
+            camera.Update(gameTime);
+            plane.Update(gameTime);
+
+            axis.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
+            plane.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
+
+            Controls.UpdateLastStates();
 
             base.Update(gameTime);
         }
@@ -73,9 +127,12 @@ namespace ip3d_tpc3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(0.15f, 0.15f, 0.15f));
 
             // TODO: Add your drawing code here
+            axis.Draw(gameTime);
+            plane.DrawCustomShader(gameTime, camera, light);
+
 
             base.Draw(gameTime);
         }

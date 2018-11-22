@@ -41,9 +41,16 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Axis3D.cs" />
+    <Compile Include="Camera.cs" />
+    <Compile Include="Controls.cs" />
+    <Compile Include="DirectionalLight.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Plane.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OrbitCamera.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -53,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Diffuse.fx" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
