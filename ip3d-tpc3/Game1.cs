@@ -65,7 +65,7 @@ namespace ip3d_tpc3
             camera = new OrbitCamera(this, Vector3.Zero, new Vector3(10, 10, 0));
             camera.Target.Y = 2f;
 
-            light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Blue.ToVector4(), 0.85f);
+            light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.White.ToVector4(), 0.85f);
 
             // init controls
             Controls.Initilalize();
