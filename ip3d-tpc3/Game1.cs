@@ -60,7 +60,7 @@ namespace ip3d_tpc3
 
             axis = new Axis3D(this, Vector3.Zero, 10);
 
-            plane = new Plane(this, "grey", 10, 10, 2, 2);
+            plane = new Plane(this, "checker2", 10, 10, 2, 2);
 
             camera = new OrbitCamera(this, Vector3.Zero, new Vector3(10, 10, 0));
             camera.Target.Y = 2f;
