@@ -18,6 +18,10 @@ namespace ip3d_tpc3
         float Yaw = 45;
 
         float Pitch = -45;  // default;
+
+        float Zoom = 45f;
+
+        float TargetZoom = 45f;
         
         // the length of the offset
         float OffsetDistance;
@@ -44,23 +48,9 @@ namespace ip3d_tpc3
             // the mouse delta is calculated with the middle of the screen
             // because we will snap the mouse to it                
             ProcessMouseMovement(Controls.CurrMouseState.Position.X - midWidth, Controls.CurrMouseState.Position.Y - midHeight);
-
-            //// calculate coordinates
-            //// the camera will rotate around the tank
-            //float x = (float)Math.Sin(MathHelper.ToRadians(Yaw)) * OffsetDistance;
-            //float z = (float)Math.Cos(MathHelper.ToRadians(Yaw)) * OffsetDistance;
-
-            //float y = MathHelper.ToRadians(Pitch) * OffsetDistance;
-
-            //// the result will be an offset in the world space, offseted by the tank position
-            //// the offset will also push back when accelerating
-            //Position = new Vector3(x, y, z) + Target;
+            ProcessMouseScroll();
 
 
-            //float x = OffsetDistance * (float)Math.Sin(MathHelper.ToRadians(Yaw)) * (float)Math.Cos(MathHelper.ToRadians(Pitch));
-            //float y = OffsetDistance * (float)Math.Sin(MathHelper.ToRadians(Yaw)) * (float)Math.Sin(MathHelper.ToRadians(Pitch));
-            //float z = OffsetDistance * (float)Math.Cos(MathHelper.ToRadians(Yaw));
-            
             Vector3 position = new Vector3(0f, 0f, OffsetDistance);
 
             position = Vector3.Transform(position, Matrix.CreateRotationX(MathHelper.ToRadians(Pitch)));
@@ -72,6 +62,15 @@ namespace ip3d_tpc3
 
             // finally, update view transform
             ViewTransform = Matrix.CreateLookAt(Position, Target, Vector3.Up);
+
+            if(Zoom != TargetZoom)
+            {
+
+                Zoom += (TargetZoom - Zoom) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            }
+
+            ProjectionTransform = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Zoom), (float)Game.GraphicsDevice.Viewport.Width / (float)Game.GraphicsDevice.Viewport.Height, 0.1f, 1000f);
 
             base.Update(gameTime);
 
@@ -95,6 +94,25 @@ namespace ip3d_tpc3
                 if (Pitch < -89.0f)
                     Pitch = -89.0f;
             }
+
+        }
+
+        // used to update the camera zoom based on mouse scroll
+        // the code is self explanatory
+        private void ProcessMouseScroll()
+        {
+
+            float value = Controls.CurrMouseState.ScrollWheelValue - Controls.LastMouseState.ScrollWheelValue;
+            value *= 0.1f;
+
+            if (TargetZoom >= 1.0f && TargetZoom <= 80.0f)
+            {
+                TargetZoom -= value;
+            }
+
+            if (TargetZoom <= 1.0f) TargetZoom = 1.0f;
+
+            if (TargetZoom >= 80.0f) TargetZoom = 80.0f;
 
         }
 
