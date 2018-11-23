@@ -84,7 +84,7 @@ namespace ip3d_tpc3
 
             plane = new Plane(this, "checker2", 10, 10, 2, 2);
 
-            camera = new OrbitCamera(this, Vector3.Zero, new Vector3(20, 0, 0));
+            camera = new OrbitCamera(this, Vector3.Zero, 20f);
             camera.Target.Y = 2f;
 
             light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Yellow.ToVector4(), 0.85f);
@@ -99,11 +99,11 @@ namespace ip3d_tpc3
             particleEmitter.SpawnRate = 440f;
             particleEmitter.ParticleLifespanMilliseconds = 1000f;
             particleEmitter.ParticleLifespanVariationMilliseconds = 500f;
-            particleEmitter.ParticlesPerBurst = 100;
+            particleEmitter.ParticlesPerBurst = 500;
             particleEmitter.Burst = true;
             particleEmitter.Activated = true;
 
-            particleEmitter2 = new LineParticleEmitter(this, new Vector3(-5f, 2.5f, 0f), 0.5f, 1000);
+            particleEmitter2 = new LineParticleEmitter(this, new Vector3(-5f, 2.5f, 0f), 0.5f, 5000);
             particleEmitter2.MakeParticles(0.05f, Color.LightGreen);
             particleEmitter2.ParticleVelocity = new Vector3(0f, 0f, 0f);
             particleEmitter2.YVelocityVariationRange = new Vector2(-1000f, 10000f);
@@ -112,11 +112,11 @@ namespace ip3d_tpc3
             particleEmitter2.SpawnRate = 120f;
             particleEmitter2.ParticleLifespanMilliseconds = 1000f;
             particleEmitter2.ParticleLifespanVariationMilliseconds = 500f;
-            particleEmitter2.ParticlesPerBurst = 100;
+            particleEmitter2.ParticlesPerBurst = 500;
             particleEmitter2.Burst = true;
             particleEmitter2.Activated = true;
 
-            particleEmitter3 = new LineParticleEmitter(this, new Vector3(0f, 2.5f, 5f), 0.5f, 1000);
+            particleEmitter3 = new LineParticleEmitter(this, new Vector3(0f, 2.5f, 5f), 0.5f, 5000);
             particleEmitter3.MakeParticles(0.05f, Color.LightSkyBlue);
             particleEmitter3.ParticleVelocity = new Vector3(0f, 0f, 0f);
             particleEmitter3.YVelocityVariationRange = new Vector2(-1000f, 10000f);
@@ -125,11 +125,11 @@ namespace ip3d_tpc3
             particleEmitter3.SpawnRate = 60f;
             particleEmitter3.ParticleLifespanMilliseconds = 1000f;
             particleEmitter3.ParticleLifespanVariationMilliseconds = 500f;
-            particleEmitter3.ParticlesPerBurst = 100;
+            particleEmitter3.ParticlesPerBurst = 500;
             particleEmitter3.Burst = true;
             particleEmitter3.Activated = true;
 
-            purpleRainEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f), 5f, 500);            
+            purpleRainEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f), 5f, 5000);            
             purpleRainEmitter.MakeParticles(0.1f, Color.Magenta);
             purpleRainEmitter.ParticleVelocity = new Vector3(0f, -9.8f, 0f);
             purpleRainEmitter.YVelocityVariationRange = new Vector2(-100f, 100f);

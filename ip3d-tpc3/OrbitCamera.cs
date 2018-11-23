@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace ip3d_tpc3
 {
     public class OrbitCamera : Camera
     {        
-        // the offset to keep the camera away from teh tank
-        Vector3 Offset;
         
         // sensitivity
         public float MouseSensitivity = 0.1f;
@@ -26,15 +25,17 @@ namespace ip3d_tpc3
         // the length of the offset
         float OffsetDistance;
 
+
+        float Acceleration = 5f;
+        float Velocity = 0f;
+
         // constructor
-        public OrbitCamera(Game game, Vector3 target, Vector3 offset, float fieldOfView = 45f) : base(game, fieldOfView)
+        public OrbitCamera(Game game, Vector3 target, float offset, float fieldOfView = 45f) : base(game, fieldOfView)
         {
             
             Target = target;
 
-            Offset = offset;
-            
-            OffsetDistance = offset.Length();
+            OffsetDistance = offset;
             
         }
 
@@ -50,11 +51,24 @@ namespace ip3d_tpc3
             ProcessMouseMovement(Controls.CurrMouseState.Position.X - midWidth, Controls.CurrMouseState.Position.Y - midHeight);
             ProcessMouseScroll();
 
+            if(Controls.IsKeyDown(Keys.W))
+            {
+
+                Velocity -= Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            } else if(Controls.IsKeyDown(Keys.S))
+            {
+
+                Velocity += Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            }
+
+            OffsetDistance += Velocity;
+            Velocity *= 0.9f;
 
             Vector3 position = new Vector3(0f, 0f, OffsetDistance);
 
             position = Vector3.Transform(position, Matrix.CreateRotationX(MathHelper.ToRadians(Pitch)));
-
             position = Vector3.Transform(position, Matrix.CreateRotationY(MathHelper.ToRadians(Yaw)));
 
             Position = position + Target;
