@@ -3,10 +3,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ip3d_tpc3
 {
+    /// <summary>
+    /// Represents a single Particle. This particle will render a line on the screen.
+    /// </summary>
     public class LineParticle
     {
-
+        // reference to the parent spawner
         public LineParticleEmitter Spawner;
+
+        /*
+         * Bellow properties are self explanatory
+         */ 
 
         public double SpawnedAtMilliseconds = 0f;
         public double MillisecondsAfterSpawn = 0f;
@@ -19,9 +26,10 @@ namespace ip3d_tpc3
         public Vector3 Velocity;
         public Vector3 Drag;
 
-        public bool Alive;
-
         public float Size;
+        
+        // boolean to specify if this particle is enabled or not
+        public bool Alive;
         
         /*
          * Constructor
@@ -32,6 +40,7 @@ namespace ip3d_tpc3
             Acceleration = Vector3.Zero;
             Velocity = Vector3.Zero;
 
+            // set the drag to not affect the velocity
             Drag = new Vector3(1f);
 
             Position = position;
@@ -39,6 +48,7 @@ namespace ip3d_tpc3
 
             Size = size;
 
+            // make sure it is dead by default
             Kill();
 
         }
@@ -48,16 +58,21 @@ namespace ip3d_tpc3
 
             if (Alive)
             {
+                // updates timer
                 MillisecondsAfterSpawn += gameTime.ElapsedGameTime.TotalMilliseconds;
 
+                // we won't be implementing acceleration yet
                 //Velocity += Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                // apply velocity to the position
                 Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                // damp velocity
                 Velocity *= Drag;
 
             }
 
+            // check if particle as come to old age
             if (MillisecondsAfterSpawn >= LifespanMilliseconds)
             {
                 Kill();
@@ -65,6 +80,9 @@ namespace ip3d_tpc3
 
         }
 
+        /// <summary>
+        /// Kills the particle.
+        /// </summary>
         public void Kill()
         {
 
@@ -77,6 +95,9 @@ namespace ip3d_tpc3
 
         }
 
+        /// <summary>
+        /// Revives this particle.
+        /// </summary>
         public void Revive()
         {
             if(!Alive)
@@ -87,6 +108,9 @@ namespace ip3d_tpc3
 
         }
 
+        /// <summary>
+        /// Resets this particle properties.
+        /// </summary>
         public void Reset()
         {
             Alive = false;

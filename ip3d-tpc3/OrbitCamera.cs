@@ -51,16 +51,24 @@ namespace ip3d_tpc3
             ProcessMouseMovement(Controls.CurrMouseState.Position.X - midWidth, Controls.CurrMouseState.Position.Y - midHeight);
             ProcessMouseScroll();
 
-            if(Controls.IsKeyDown(Keys.W))
+            //Yaw += 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (Controls.IsKeyDown(Keys.W))
             {
 
                 Velocity -= Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            } else if(Controls.IsKeyDown(Keys.S))
+            }
+            else if(Controls.IsKeyDown(Keys.S))
             {
 
                 Velocity += Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            }
+
+            if(OffsetDistance < 1f)
+            {
+                OffsetDistance = 1f;
             }
 
             OffsetDistance += Velocity;
@@ -133,7 +141,7 @@ namespace ip3d_tpc3
 
         public override string About()
         {
-            return "Orbit camera.";
+            return "Orbit camera.\nW and S to move closer.\nMouse controls rotation.\nWheel to zoom in and out.";
         }
 
     }

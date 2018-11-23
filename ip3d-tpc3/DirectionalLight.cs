@@ -2,8 +2,14 @@
 
 namespace ip3d_tpc3
 {
+    /// <summary>
+    /// Simple class to represent a light in the scene
+    /// </summary>
     class DirectionalLight
     {
+        /*
+         * The properties of this class are self explanatory
+         */ 
 
         public Vector4 Direction;
 

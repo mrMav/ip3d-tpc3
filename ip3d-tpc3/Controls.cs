@@ -9,7 +9,7 @@ namespace ip3d_tpc3
     {
 
         /*
-         * this multidimensional array will contain the keys for both tanks
+         * this multidimensional array will contain the keys for various controls
          */ 
         public static Keys[,] MovementKeys;
 
@@ -40,7 +40,7 @@ namespace ip3d_tpc3
 
         public static void Initilalize()
         {
-            // init tanks movement keys array
+            // init movement keys array
             MovementKeys = new Keys[2,4];
 
             LastKeyboardState = Keyboard.GetState();
