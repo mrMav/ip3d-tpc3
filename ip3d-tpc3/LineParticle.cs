@@ -68,13 +68,23 @@ namespace ip3d_tpc3
         public void Kill()
         {
 
+            if(Alive)
+                Stats.AliveParticles--;
+
             Alive = false;
+
+
 
         }
 
         public void Revive()
         {
+            if(!Alive)
+                Stats.AliveParticles++;
+
             Alive = true;
+
+
         }
 
         public void Reset()

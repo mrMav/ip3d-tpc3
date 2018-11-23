@@ -5,6 +5,14 @@ using System;
 
 namespace ip3d_tpc3
 {
+
+    static class Stats
+    {
+
+        public static int AliveParticles = 0;
+
+    }
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -24,6 +32,7 @@ namespace ip3d_tpc3
         DirectionalLight light;
 
         LineParticleEmitter particleEmitter;
+        LineParticleEmitter particleEmitter2;
         LineParticleEmitter purpleRainEmitter;
 
         FrameRate frameRate;
@@ -64,6 +73,8 @@ namespace ip3d_tpc3
             // set mouse cursor state
             IsMouseVisible = false;
 
+            IsFixedTimeStep = false;
+
             // TODO: Add your initialization logic here
 
             font = Content.Load<SpriteFont>("font");
@@ -77,7 +88,7 @@ namespace ip3d_tpc3
 
             light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Yellow.ToVector4(), 0.85f);
 
-            particleEmitter = new LineParticleEmitter(this, new Vector3(2f, 2f, 0f), 0.5f, 1000);
+            particleEmitter = new LineParticleEmitter(this, new Vector3(5f, 2.5f, 0f), 0.5f, 1000);
             particleEmitter.Rotation.X = MathHelper.ToRadians(90f);
             particleEmitter.MakeParticles(0.05f, Color.Yellow);
             particleEmitter.ParticleVelocity = new Vector3(0f, 0f, 0f);
@@ -87,9 +98,22 @@ namespace ip3d_tpc3
             particleEmitter.SpawnRate = 120f;
             particleEmitter.ParticleLifespanMilliseconds = 1000f;
             particleEmitter.ParticleLifespanVariationMilliseconds = 500f;
-            particleEmitter.ParticlesPerBurst = 200;
+            particleEmitter.ParticlesPerBurst = 100;
             particleEmitter.Burst = true;
             particleEmitter.Activated = true;
+
+            particleEmitter2 = new LineParticleEmitter(this, new Vector3(-5f, 2.5f, 0f), 0.5f, 1000);
+            particleEmitter2.MakeParticles(0.05f, Color.LightGreen);
+            particleEmitter2.ParticleVelocity = new Vector3(0f, 0f, 0f);
+            particleEmitter2.YVelocityVariationRange = new Vector2(-1000f, 10000f);
+            particleEmitter2.XVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter2.ZVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter2.SpawnRate = 120f;
+            particleEmitter2.ParticleLifespanMilliseconds = 1000f;
+            particleEmitter2.ParticleLifespanVariationMilliseconds = 500f;
+            particleEmitter2.ParticlesPerBurst = 100;
+            particleEmitter2.Burst = true;
+            particleEmitter2.Activated = true;
 
             purpleRainEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f), 5f, 500);            
             purpleRainEmitter.MakeParticles(0.1f, Color.Magenta);
@@ -160,11 +184,13 @@ namespace ip3d_tpc3
             axis.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
             plane.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
 
-            particleEmitter.Rotation.Y += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;            
-            particleEmitter.Rotation.Z += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            particleEmitter.Rotation.X += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            particleEmitter.Rotation.Y += MathHelper.ToRadians(90f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
             particleEmitter.Activated = true;
             particleEmitter.Update(gameTime);
+
+            particleEmitter2.Rotation.X += MathHelper.ToRadians(90f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            particleEmitter2.Activated = true;
+            particleEmitter2.Update(gameTime);
 
             purpleRainEmitter.Update(gameTime);
 
@@ -204,11 +230,13 @@ namespace ip3d_tpc3
             plane.DrawCustomShader(gameTime, camera, light);
 
             particleEmitter.Draw(gameTime, camera);
+            particleEmitter2.Draw(gameTime, camera);
             purpleRainEmitter.Draw(gameTime, camera);
 
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, null, null, null);
             spriteBatch.DrawString(font, $"{Math.Round(frameRate.AverageFramesPerSecond)}", new Vector2(10f, 10f), new Color(0f, 1f, 0f));
+            spriteBatch.DrawString(font, $"Alive Particles: {Stats.AliveParticles}", new Vector2(10f, 30f), new Color(0f, 1f, 0f));
             spriteBatch.End();
 
 
