@@ -33,6 +33,7 @@ namespace ip3d_tpc3
 
         LineParticleEmitter particleEmitter;
         LineParticleEmitter particleEmitter2;
+        LineParticleEmitter particleEmitter3;
         LineParticleEmitter purpleRainEmitter;
 
         FrameRate frameRate;
@@ -95,7 +96,7 @@ namespace ip3d_tpc3
             particleEmitter.YVelocityVariationRange = new Vector2(-1000f, 10000f);
             particleEmitter.XVelocityVariationRange = new Vector2(-100f, 100f);
             particleEmitter.ZVelocityVariationRange = new Vector2(-100f, 100f);
-            particleEmitter.SpawnRate = 120f;
+            particleEmitter.SpawnRate = 440f;
             particleEmitter.ParticleLifespanMilliseconds = 1000f;
             particleEmitter.ParticleLifespanVariationMilliseconds = 500f;
             particleEmitter.ParticlesPerBurst = 100;
@@ -114,6 +115,19 @@ namespace ip3d_tpc3
             particleEmitter2.ParticlesPerBurst = 100;
             particleEmitter2.Burst = true;
             particleEmitter2.Activated = true;
+
+            particleEmitter3 = new LineParticleEmitter(this, new Vector3(0f, 2.5f, 5f), 0.5f, 1000);
+            particleEmitter3.MakeParticles(0.05f, Color.LightSkyBlue);
+            particleEmitter3.ParticleVelocity = new Vector3(0f, 0f, 0f);
+            particleEmitter3.YVelocityVariationRange = new Vector2(-1000f, 10000f);
+            particleEmitter3.XVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter3.ZVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter3.SpawnRate = 60f;
+            particleEmitter3.ParticleLifespanMilliseconds = 1000f;
+            particleEmitter3.ParticleLifespanVariationMilliseconds = 500f;
+            particleEmitter3.ParticlesPerBurst = 100;
+            particleEmitter3.Burst = true;
+            particleEmitter3.Activated = true;
 
             purpleRainEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f), 5f, 500);            
             purpleRainEmitter.MakeParticles(0.1f, Color.Magenta);
@@ -192,6 +206,10 @@ namespace ip3d_tpc3
             particleEmitter2.Activated = true;
             particleEmitter2.Update(gameTime);
 
+            particleEmitter3.Rotation.Z += MathHelper.ToRadians(90f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            particleEmitter3.Activated = true;
+            particleEmitter3.Update(gameTime);
+
             purpleRainEmitter.Update(gameTime);
 
             // rain suplementary kill condition
@@ -231,6 +249,7 @@ namespace ip3d_tpc3
 
             particleEmitter.Draw(gameTime, camera);
             particleEmitter2.Draw(gameTime, camera);
+            particleEmitter3.Draw(gameTime, camera);
             purpleRainEmitter.Draw(gameTime, camera);
 
 
