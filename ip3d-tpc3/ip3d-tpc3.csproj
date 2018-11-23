@@ -46,6 +46,8 @@
     <Compile Include="Controls.cs" />
     <Compile Include="DirectionalLight.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="LineParticle.cs" />
+    <Compile Include="LineParticleEmitter.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

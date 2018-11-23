@@ -5,7 +5,7 @@ namespace ip3d_tpc3
     /*
      * Cameras Base Class
      */
-    class Camera
+    public class Camera
     {
 
         // game reference

@@ -3,7 +3,7 @@ using System;
 
 namespace ip3d_tpc3
 {
-    class OrbitCamera : Camera
+    public class OrbitCamera : Camera
     {        
         // the offset to keep the camera away from teh tank
         Vector3 Offset;

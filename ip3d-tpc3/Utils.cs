@@ -1,9 +1,29 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace ip3d_tpc3
 {
     public static class Utils
     {
+
+        /// <summary>
+        /// Returns a random number between the parameters
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <see cref="https://stackoverflow.com/a/3365374/5296964"/>
+        /// <returns></returns>
+        public static double RandomBetween(Random rnd, double min, double max)
+        {
+            // Perform arithmetic in double type to avoid overflowing
+            double range = max - min;
+            double sample = rnd.NextDouble();
+            double scaled = (sample * range) + min;
+
+            return scaled;
+        }
+
         /// <summary>
         /// Interpolates the height of the given four vertices, and return a new one on the given position.
         /// </summary>

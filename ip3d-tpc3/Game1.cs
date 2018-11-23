@@ -20,6 +20,8 @@ namespace ip3d_tpc3
 
         DirectionalLight light;
 
+        LineParticleEmitter particleEmitter;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -62,10 +64,23 @@ namespace ip3d_tpc3
 
             plane = new Plane(this, "checker2", 10, 10, 2, 2);
 
-            camera = new OrbitCamera(this, Vector3.Zero, new Vector3(10, 10, 0));
+            camera = new OrbitCamera(this, Vector3.Zero, new Vector3(20, 0, 0));
             camera.Target.Y = 2f;
 
-            light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.White.ToVector4(), 0.85f);
+            light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Yellow.ToVector4(), 0.85f);
+
+            particleEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f));
+            //particleEmitter.Rotation.X = MathHelper.ToRadians(45f);
+            particleEmitter.MakeParticles(0.05f, Color.Yellow);
+            particleEmitter.ParticleVelocity = new Vector3(0f, -9.8f, 0f);
+            particleEmitter.YVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter.XVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter.ZVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter.SpawnRate = 14f;
+            particleEmitter.ParticleLifespanMilliseconds = 1000f;
+            particleEmitter.ParticleLifespanVariationMilliseconds = 400f;
+            particleEmitter.Activated = true;
+
 
             // init controls
             Controls.Initilalize();
@@ -116,6 +131,8 @@ namespace ip3d_tpc3
             axis.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
             plane.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
 
+            particleEmitter.Update(gameTime);
+
             Controls.UpdateLastStates();
 
             base.Update(gameTime);
@@ -133,6 +150,7 @@ namespace ip3d_tpc3
             axis.Draw(gameTime);
             plane.DrawCustomShader(gameTime, camera, light);
 
+            particleEmitter.Draw(gameTime, camera);
 
             base.Draw(gameTime);
         }
