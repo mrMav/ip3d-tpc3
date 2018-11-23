@@ -14,7 +14,7 @@ namespace ip3d_tpc3
         
         public Vector3 Position;
         public Vector3 InitialPosition;
-
+        
         public Vector3 Acceleration;
         public Vector3 Velocity;
         public Vector3 Drag;
@@ -50,7 +50,8 @@ namespace ip3d_tpc3
             {
                 MillisecondsAfterSpawn += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                Velocity += Acceleration;
+                //Velocity += Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
                 Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 Velocity *= Drag;

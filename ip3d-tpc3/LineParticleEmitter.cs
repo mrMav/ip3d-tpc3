@@ -36,7 +36,17 @@ namespace ip3d_tpc3
         /*
          * The maximum number of particles.
          */
-        private int MaxParticles;
+        private int _maxParticles;
+        public int MaxParticles
+        {
+            get
+            {
+                return _maxParticles;
+            }
+            set
+            {
+            }
+        }
 
         /*
          * If this emitter is active.
@@ -65,6 +75,11 @@ namespace ip3d_tpc3
         RasterizerState RasterizerState;
 
         /*
+         * helper axis
+         */
+        Axis3D Axis;
+
+        /*
          * This emitter RNG
          */
         private Random Rnd;
@@ -86,9 +101,9 @@ namespace ip3d_tpc3
             }
             set
             {
-                if (value > MaxParticles)
+                if (value > _maxParticles)
                 {
-                    _particlesPerBurst = MaxParticles;
+                    _particlesPerBurst = _maxParticles;
                 }
                 else
                 {
@@ -124,7 +139,7 @@ namespace ip3d_tpc3
             Position = position;
             Rotation = Vector3.Zero;
 
-            MaxParticles = maxParticles;
+            _maxParticles = maxParticles;
 
             Rnd = new Random(seed);
 
@@ -150,14 +165,16 @@ namespace ip3d_tpc3
             RasterizerState.CullMode = CullMode.None;
             RasterizerState.FillMode = FillMode.WireFrame;
 
+            Axis = new Axis3D(game, Vector3.Zero, radius);
+
         }
 
         public void MakeParticles(float size, Color color)
         {
-            Particles = new LineParticle[MaxParticles];
-            VertexList = new VertexPositionColor[MaxParticles * 2];
+            Particles = new LineParticle[_maxParticles];
+            VertexList = new VertexPositionColor[_maxParticles * 2];
 
-            for (int i = 0, j = 0; i < MaxParticles; i++)
+            for (int i = 0, j = 0; i < _maxParticles; i++)
             {
                 Particles[i] = new LineParticle(Game, color, Vector3.Zero, size);
                 Particles[i].Spawner = this;
@@ -189,7 +206,7 @@ namespace ip3d_tpc3
                     {
                         int count = 0;
 
-                        for (int i = 0; i < MaxParticles; i++)
+                        for (int i = 0; i < _maxParticles; i++)
                         {
 
                             if (count >= ParticlesPerBurst)
@@ -211,7 +228,7 @@ namespace ip3d_tpc3
                     {
                         // get the first dead particle
                         LineParticle p = null;
-                        for (int i = 0; i < MaxParticles; i++)
+                        for (int i = 0; i < _maxParticles; i++)
                         {
                             if (!Particles[i].Alive)
                             {
@@ -233,7 +250,7 @@ namespace ip3d_tpc3
             }
 
             // update all particles
-            for (int i = 0, j = 0; i < MaxParticles; i++)
+            for (int i = 0, j = 0; i < _maxParticles; i++)
             {
                 LineParticle p = Particles[i];
 
@@ -263,8 +280,8 @@ namespace ip3d_tpc3
         public void Draw(GameTime gameTime, Camera camera)
         {
 
-            Effect.World = WorldTransform;
-            //Effect.World = Matrix.Identity;
+            //Effect.World = WorldTransform;
+            Effect.World = Matrix.Identity;
             Effect.View = camera.ViewTransform;
             Effect.Projection = camera.ProjectionTransform;
 
@@ -272,11 +289,17 @@ namespace ip3d_tpc3
             Game.GraphicsDevice.RasterizerState = RasterizerState;
             Game.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, VertexList, 0, VertexList.Length / 2);
 
+            // draw the helper axis
+            Axis.worldMatrix = WorldTransform;
+            Axis.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
+            Axis.Draw(gameTime);
+
+
         }
 
         public void SetAcceleration(float x, float y, float z)
         {
-            for (int i = 0; i < MaxParticles; i++)
+            for (int i = 0; i < _maxParticles; i++)
             {
                 Particles[i].Acceleration.X = x;
                 Particles[i].Acceleration.Y = y;
@@ -286,7 +309,7 @@ namespace ip3d_tpc3
 
         public void SetDrag(float x, float y, float z)
         {
-            for (int i = 0; i < MaxParticles; i++)
+            for (int i = 0; i < _maxParticles; i++)
             {
                 Particles[i].Drag.X = x;
                 Particles[i].Drag.Y = y;
@@ -307,11 +330,9 @@ namespace ip3d_tpc3
             p.SpawnedAtMilliseconds = gameTime.TotalGameTime.TotalMilliseconds;
             p.LifespanMilliseconds = ParticleLifespanMilliseconds + (float)Rnd.Next((int)-ParticleLifespanVariationMilliseconds, (int)ParticleLifespanVariationMilliseconds);
 
-            p.Velocity.X = velocityX;
-            p.Velocity.Y = velocityY;
-            p.Velocity.Z = velocityZ;
+            p.Velocity = Vector3.Transform(new Vector3(velocityX, velocityY, velocityZ), Matrix.CreateFromYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z));
 
-            p.Position = GetRandomPosition();
+            p.Position = Vector3.Transform(GetRandomPosition(), WorldTransform);
             
         }
 
@@ -329,6 +350,6 @@ namespace ip3d_tpc3
             
 
         }
-
+        
     }
 }

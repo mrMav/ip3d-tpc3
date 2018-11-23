@@ -25,6 +25,8 @@ namespace ip3d_tpc3
         // if true, a geometry update is needed
         public bool DirtyGeometry;
 
+        public Vector3 Position;
+
         // world transform or matrix is the matrix we will multiply
         // our vertices for. this transforms the vertices from local
         // space to world space
@@ -81,6 +83,8 @@ namespace ip3d_tpc3
 
             DirtyGeometry = false;
 
+            Position = Vector3.Zero;
+
             WorldTransform = Matrix.Identity;
 
             DiffuseMap = Game.Content.Load<Texture2D>(textureKey);
@@ -130,6 +134,9 @@ namespace ip3d_tpc3
         {
             //float dt = (float)gameTime.TotalGameTime.TotalSeconds;
 
+            Matrix translation = Matrix.CreateTranslation(Position);
+
+            WorldTransform = translation;
 
         }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace ip3d_tpc3
 {
@@ -12,6 +13,8 @@ namespace ip3d_tpc3
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        SpriteFont font;
+
         Axis3D axis;
 
         Plane plane;
@@ -21,6 +24,9 @@ namespace ip3d_tpc3
         DirectionalLight light;
 
         LineParticleEmitter particleEmitter;
+        LineParticleEmitter purpleRainEmitter;
+
+        FrameRate frameRate;
 
         public Game1()
         {
@@ -60,6 +66,8 @@ namespace ip3d_tpc3
 
             // TODO: Add your initialization logic here
 
+            font = Content.Load<SpriteFont>("font");
+
             axis = new Axis3D(this, Vector3.Zero, 10);
 
             plane = new Plane(this, "checker2", 10, 10, 2, 2);
@@ -69,18 +77,32 @@ namespace ip3d_tpc3
 
             light = new DirectionalLight(new Vector4(1, 1, 0, 0), Color.Yellow.ToVector4(), 0.85f);
 
-            particleEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f));
-            //particleEmitter.Rotation.X = MathHelper.ToRadians(45f);
+            particleEmitter = new LineParticleEmitter(this, new Vector3(2f, 2f, 0f), 0.5f, 1000);
+            particleEmitter.Rotation.X = MathHelper.ToRadians(90f);
             particleEmitter.MakeParticles(0.05f, Color.Yellow);
-            particleEmitter.ParticleVelocity = new Vector3(0f, -9.8f, 0f);
-            particleEmitter.YVelocityVariationRange = new Vector2(-100f, 100f);
+            particleEmitter.ParticleVelocity = new Vector3(0f, 0f, 0f);
+            particleEmitter.YVelocityVariationRange = new Vector2(-1000f, 10000f);
             particleEmitter.XVelocityVariationRange = new Vector2(-100f, 100f);
             particleEmitter.ZVelocityVariationRange = new Vector2(-100f, 100f);
-            particleEmitter.SpawnRate = 14f;
+            particleEmitter.SpawnRate = 120f;
             particleEmitter.ParticleLifespanMilliseconds = 1000f;
-            particleEmitter.ParticleLifespanVariationMilliseconds = 400f;
+            particleEmitter.ParticleLifespanVariationMilliseconds = 500f;
+            particleEmitter.ParticlesPerBurst = 200;
+            particleEmitter.Burst = true;
             particleEmitter.Activated = true;
 
+            purpleRainEmitter = new LineParticleEmitter(this, new Vector3(0f, 10f, 0f), 5f, 500);            
+            purpleRainEmitter.MakeParticles(0.1f, Color.Magenta);
+            purpleRainEmitter.ParticleVelocity = new Vector3(0f, -9.8f, 0f);
+            purpleRainEmitter.YVelocityVariationRange = new Vector2(-100f, 100f);
+            purpleRainEmitter.XVelocityVariationRange = new Vector2(-100f, 100f);
+            purpleRainEmitter.ZVelocityVariationRange = new Vector2(-100f, 100f);
+            purpleRainEmitter.SpawnRate = 0f;
+            purpleRainEmitter.ParticleLifespanMilliseconds = 1000f;
+            purpleRainEmitter.ParticleLifespanVariationMilliseconds = 500f;
+            purpleRainEmitter.Activated = true;
+
+            frameRate = new FrameRate();
 
             // init controls
             Controls.Initilalize();
@@ -116,9 +138,16 @@ namespace ip3d_tpc3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+            frameRate.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
             Controls.UpdateCurrentStates();
 
-            Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+            if (Controls.IsKeyPressed(Keys.M))
+                IsMouseVisible = !IsMouseVisible;
+
+            if(!IsMouseVisible)
+                Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -131,7 +160,31 @@ namespace ip3d_tpc3
             axis.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
             plane.UpdateShaderMatrices(camera.ViewTransform, camera.ProjectionTransform);
 
+            particleEmitter.Rotation.Y += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;            
+            particleEmitter.Rotation.Z += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            particleEmitter.Rotation.X += MathHelper.ToRadians(89f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            particleEmitter.Activated = true;
             particleEmitter.Update(gameTime);
+
+            purpleRainEmitter.Update(gameTime);
+
+            // rain suplementary kill condition
+            // (collision with floor)
+            for (int i = 0; i < purpleRainEmitter.MaxParticles; i++)
+            {
+
+                LineParticle p = purpleRainEmitter.Particles[i];
+
+                if(p.Alive)
+                {
+
+                    if(p.Position.Y < plane.Position.Y)
+                    {
+                        p.Kill();
+                    }
+
+                }
+            }
 
             Controls.UpdateLastStates();
 
@@ -151,8 +204,17 @@ namespace ip3d_tpc3
             plane.DrawCustomShader(gameTime, camera, light);
 
             particleEmitter.Draw(gameTime, camera);
+            purpleRainEmitter.Draw(gameTime, camera);
+
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, null, null, null);
+            spriteBatch.DrawString(font, $"{Math.Round(frameRate.AverageFramesPerSecond)}", new Vector2(10f, 10f), new Color(0f, 1f, 0f));
+            spriteBatch.End();
+
+
 
             base.Draw(gameTime);
         }
+        
     }
 }
